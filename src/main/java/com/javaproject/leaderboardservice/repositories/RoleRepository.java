@@ -1,5 +1,6 @@
 package com.javaproject.leaderboardservice.repositories;
 
+import com.javaproject.leaderboardservice.model.ERole;
 import com.javaproject.leaderboardservice.model.Role;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,8 +9,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Long> {
+    Optional<Role> findByName(ERole name);
     //@Query("select u.userName from User u inner join u.area ar where ar.idArea = :idArea")
 
 //    @Query(nativeQuery = true,value = "Select * from user JOIN role ON user.role_id = role.id WHERE role.id = :role_id")
