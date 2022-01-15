@@ -10,16 +10,16 @@ public class Role extends AuditModel{
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private ERole name;
 
-    @Column(unique = true)
-    private String role_description;
+    public Role() {
 
-    public String getRole_description() {
-        return role_description;
     }
 
-    public void setRole_description(String role_description) {
-        this.role_description = role_description;
+    public Role(ERole name) {
+        this.name = name;
     }
 
     public Long getId() {
@@ -28,6 +28,14 @@ public class Role extends AuditModel{
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public ERole getName() {
+        return name;
+    }
+
+    public void setName(ERole name) {
+        this.name = name;
     }
 
 
