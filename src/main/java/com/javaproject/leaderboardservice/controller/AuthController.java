@@ -14,6 +14,7 @@ import com.javaproject.leaderboardservice.security.jwt.JwtUtils;
 import com.javaproject.leaderboardservice.security.services.UserDetailsImpl;
 import com.javaproject.leaderboardservice.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,6 +28,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -131,13 +133,62 @@ public class AuthController {
 
     @PostMapping("/send-verification-code")
     public ResponseEntity<?> sendVerificationCode(@Valid @RequestBody VerificationRequest verificationRequest) throws MessagingException, IOException {
+
+        Set<Role> roles = new HashSet<>();
+        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+
         String email = verificationRequest.getEmail();
         User user = new User();
         user.setEmail(email);
         user.setIs_verified(false);
-        userRepository.save(user);
-        userService.sendVerificationMessage(email);
+        user.setRoles(roles);
+        roles.add(userRole);
 
-        return ResponseEntity.ok(new MessageResponse("Verification Email Sent"));
+        long verificationCode = userService.generateVerificationCode();
+        user.setVerification_code(verificationCode);
+
+        if (userService.sendVerificationMessage(email, verificationCode)) {
+            userRepository.save(user);
+            return ResponseEntity.ok(new MessageResponse("Verification Email Sent"));
+        }else{
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: An error occurred"));
+        }
+    }
+
+    @PostMapping("/verify-user-code")
+    public ResponseEntity<?> verifyUserCode(@RequestBody VerificationRequest verificationRequest){
+        long verificationCode = verificationRequest.getVerification_code();
+        String email = verificationRequest.getEmail();
+
+        if (userService.verifyUserCode(verificationCode, email)){
+            Optional<User> userDetail = userRepository.findByEmail(email);
+            return ResponseEntity.ok(userDetail.get());
+        }else{
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: An error occurred"));
+        }
+    }
+
+    @PutMapping("/complete-registration")
+    public ResponseEntity<?> completeUserRegistration(@RequestBody VerificationRequest verificationRequest){
+
+        if (userRepository.existsByUsername(verificationRequest.getUsername())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: Username is already taken!"));
+        }
+
+        String userName = verificationRequest.getUsername();
+        String password = encoder.encode(verificationRequest.getPassword());
+        long userId = verificationRequest.getUserId();
+
+        User userDetails =  userService.completeRegistration(userId, userName, password);
+
+        return ResponseEntity.status(HttpStatus.OK).body(userDetails);
+
     }
 }
