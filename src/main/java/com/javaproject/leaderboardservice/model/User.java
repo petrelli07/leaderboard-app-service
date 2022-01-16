@@ -26,6 +26,26 @@ public class User extends AuditModel{
     @Size(max = 20)
     private String username;
 
+    private Long verification_code;
+
+    public Long getVerification_code() {
+        return verification_code;
+    }
+
+    public void setVerification_code(Long verification_code) {
+        this.verification_code = verification_code;
+    }
+
+    public Boolean getIs_verified() {
+        return is_verified;
+    }
+
+    public void setIs_verified(Boolean is_verified) {
+        this.is_verified = is_verified;
+    }
+
+    private Boolean is_verified;
+
     @NotBlank
     @Size(max = 50)
     @Email

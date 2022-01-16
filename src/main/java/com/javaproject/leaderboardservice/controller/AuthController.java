@@ -5,12 +5,14 @@ import com.javaproject.leaderboardservice.model.Role;
 import com.javaproject.leaderboardservice.model.User;
 import com.javaproject.leaderboardservice.payload.request.LoginRequest;
 import com.javaproject.leaderboardservice.payload.request.SignupRequest;
+import com.javaproject.leaderboardservice.payload.request.VerificationRequest;
 import com.javaproject.leaderboardservice.payload.response.JwtResponse;
 import com.javaproject.leaderboardservice.payload.response.MessageResponse;
 import com.javaproject.leaderboardservice.repositories.RoleRepository;
 import com.javaproject.leaderboardservice.repositories.UserRepository;
 import com.javaproject.leaderboardservice.security.jwt.JwtUtils;
 import com.javaproject.leaderboardservice.security.services.UserDetailsImpl;
+import com.javaproject.leaderboardservice.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,7 +22,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,6 +48,9 @@ public class AuthController {
 
     @Autowired
     JwtUtils jwtUtils;
+
+    @Autowired
+    UserService userService;
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -121,4 +128,16 @@ public class AuthController {
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 
+
+    @PostMapping("/send-verification-code")
+    public ResponseEntity<?> sendVerificationCode(@Valid @RequestBody VerificationRequest verificationRequest) throws MessagingException, IOException {
+        String email = verificationRequest.getEmail();
+        User user = new User();
+        user.setEmail(email);
+        user.setIs_verified(false);
+        userRepository.save(user);
+        userService.sendVerificationMessage(email);
+
+        return ResponseEntity.ok(new MessageResponse("Verification Email Sent"));
+    }
 }
