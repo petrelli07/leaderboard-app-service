@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.core.JsonGenerator;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -42,6 +43,7 @@ public class User extends AuditModel{
 
     public User() {
     }
+
 
     public User(String username, String email, String password) {
         this.username = username;
@@ -87,5 +89,11 @@ public class User extends AuditModel{
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public static User fromId(Long id) {
+        User user = new User();
+        user.id = id;
+        return user;
     }
 }

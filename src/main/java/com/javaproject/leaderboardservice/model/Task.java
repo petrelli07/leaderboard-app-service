@@ -1,13 +1,12 @@
 package com.javaproject.leaderboardservice.model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.core.JsonGenerator;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+
 
 @Entity
 public class Task extends AuditModel {
@@ -16,9 +15,41 @@ public class Task extends AuditModel {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    private String title, description;
+    public Task(){
 
-    @Column(columnDefinition = "integer default 0")
+    }
+
+    @Column(nullable = false)
+    private String title;
+
+    @Column(nullable = false)
+    private String description;
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Integer getPoint() {
+        return point;
+    }
+
+    public void setPoint(Integer point) {
+        this.point = point;
+    }
+
+    @Column(columnDefinition = "integer default 0", insertable=false)
     private Integer point;
 
 
@@ -35,6 +66,9 @@ public class Task extends AuditModel {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
     @JsonIdentityReference(alwaysAsId=true)
-    @JsonProperty("user_id")
     private User user;
+    @JsonProperty("user_id")
+    public void setUserById(Long user_id) {
+        user = User.fromId(user_id);
+    }
 }
