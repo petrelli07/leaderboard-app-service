@@ -22,16 +22,36 @@ public class User extends AuditModel{
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @NotBlank
+
     @Size(max = 20)
     private String username;
 
-    @NotBlank
+    @Column(name="verification_code")
+    private Long verificationCode;
+
+    public Long getVerification_code() {
+        return verificationCode;
+    }
+
+    public void setVerification_code(Long verification_code) {
+        this.verificationCode = verification_code;
+    }
+
+    public Boolean getIs_verified() {
+        return is_verified;
+    }
+
+    public void setIs_verified(Boolean is_verified) {
+        this.is_verified = is_verified;
+    }
+
+    private Boolean is_verified;
+
     @Size(max = 50)
     @Email
     private String email;
 
-    @NotBlank
+
     @Size(max = 120)
     private String password;
 
@@ -95,5 +115,18 @@ public class User extends AuditModel{
         User user = new User();
         user.id = id;
         return user;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", verification_code=" + verificationCode +
+                ", is_verified=" + is_verified +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", roles=" + roles +
+                '}';
     }
 }
