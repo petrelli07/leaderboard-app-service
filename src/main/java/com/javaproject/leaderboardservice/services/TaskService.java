@@ -5,6 +5,7 @@ import com.javaproject.leaderboardservice.model.Task;
 import com.javaproject.leaderboardservice.model.User;
 import com.javaproject.leaderboardservice.payload.request.TaskRequest;
 import com.javaproject.leaderboardservice.repositories.TaskRepository;
+import com.javaproject.leaderboardservice.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +19,9 @@ public class TaskService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public Task addTask(long userId, String description, String title){
             Task task = new Task();
@@ -48,6 +52,10 @@ public class TaskService {
         return taskRepository.save(taskToUpdate);
     }
 
+    public List<Object> getAllTimeTasks(){
+        List <Object> task = taskRepository.find();
+        return task;
+    }
 
 //    public List<Task> getTaskForCurrentMonth(){
 //        return taskRepository.getTaskForCurrentMonth();

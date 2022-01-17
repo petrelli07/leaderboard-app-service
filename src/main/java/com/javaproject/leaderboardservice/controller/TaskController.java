@@ -45,5 +45,10 @@ public class TaskController {
         return ResponseEntity.ok(taskDetails);
     }
 
+    @GetMapping("/tasks/all")
+    public ResponseEntity<?> getAllTasks(){
+        return ResponseEntity.ok(taskService.getAllTimeTasks());
+    }
+
 
 }

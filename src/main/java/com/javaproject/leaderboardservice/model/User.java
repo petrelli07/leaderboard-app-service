@@ -13,6 +13,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -29,6 +30,28 @@ public class User extends AuditModel{
     @Column(name="verification_code")
     private Long verificationCode;
 
+    private Boolean is_verified;
+
+    @Size(max = 50)
+    @Email
+    private String email;
+
+
+    @Size(max = 120)
+    private String password;
+
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(	name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
+
+    public User() {
+    }
+
+
+
     public Long getVerification_code() {
         return verificationCode;
     }
@@ -43,25 +66,6 @@ public class User extends AuditModel{
 
     public void setIs_verified(Boolean is_verified) {
         this.is_verified = is_verified;
-    }
-
-    private Boolean is_verified;
-
-    @Size(max = 50)
-    @Email
-    private String email;
-
-
-    @Size(max = 120)
-    private String password;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(	name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new HashSet<>();
-
-    public User() {
     }
 
 
