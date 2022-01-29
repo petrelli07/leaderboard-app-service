@@ -30,7 +30,7 @@ public class TaskController {
     }
 
     @PutMapping("/task/point/update")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity updateTaskPoint(@RequestBody TaskRequest taskRequest){
         long task_id = taskRequest.getTask_id();
 
@@ -48,6 +48,26 @@ public class TaskController {
     @GetMapping("/tasks/all")
     public ResponseEntity<?> getAllTasks(){
         return ResponseEntity.ok(taskService.getAllTimeTasks());
+    }
+
+    @GetMapping("/tasks/all/current-month")
+    public ResponseEntity<?> getCurrentMonthTasks(){
+        return ResponseEntity.ok(taskService.getTaskForCurrentMonth());
+    }
+
+    @GetMapping(value = "/tasks/user/all/{userId}")
+    public ResponseEntity<?> getAllUserTask(@PathVariable("userId") long userId){
+        return ResponseEntity.ok(taskService.getAllUserTasks(userId));
+    }
+
+    @GetMapping(value = "/tasks/user/current-month/{userId}")
+    public ResponseEntity<?> getUserCurrentMonthTask(@PathVariable("userId") long userId){
+        return ResponseEntity.ok(taskService.getUserTaskForCurrentMonth(userId));
+    }
+
+    @GetMapping(value = "/tasks/{taskId}")
+    public ResponseEntity<?> getTaskById(@PathVariable("taskId") long taskId){
+        return ResponseEntity.ok(taskService.getTaskById(taskId));
     }
 
 
